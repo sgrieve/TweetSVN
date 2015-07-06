@@ -56,8 +56,7 @@ def Tweet(Tweet, revision):
     """
     import subprocess
     command = 'perl ttytter.pl -status=\"'+Tweet+'\" /short'
-    x = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True) 
-    print x.stdout.read()
+    subprocess.Popen(command, stdout=subprocess.PIPE, shell=True) 
     with open('.rev','w') as f:
         f.write(revision)
     
@@ -85,7 +84,7 @@ def Run():
     url = 'https://sourced.ecdf.ed.ac.uk/projects/geos/LSD_devel/timeline'
     
     FinalTweet = make_a_tweet(a,b,url)
-    print len(FinalTweet)
+
     if CheckForNewCommit(a):    
         Tweet(FinalTweet,a)
 
