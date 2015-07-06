@@ -5,7 +5,7 @@ Created on Fri Jul 03 16:59:37 2015
 @author: s0675405
 """
 
-def ScrapeSVN(url):
+def ScrapeSVN(repoURL):
     """
     Given a url to an svn repo, return a file object that contains the last 
     commit message from svn log.
@@ -47,18 +47,23 @@ def make_a_tweet(revision,message,url):
     """
     Generate a valid tweet using the info passed in.
     """
-    tweet = '4564546546546546546554664654654656454'
-    if len(tweet) > 14:
+    tweet = revision + ': ' + message + ' | '+ url
+    
+    if len(tweet) > 140:
         raise ValueError('Tweet length is %i but must be < 140' % (len(tweet)))
     else:
         return tweet
 
 
-url = 'https://svn.ecdf.ed.ac.uk/repo/geos/LSD_devel/LSDTopoTools/trunk'
+repoURL = 'https://svn.ecdf.ed.ac.uk/repo/geos/LSD_devel/LSDTopoTools/trunk'
 
-CommitObject = ScrapeSVN(url)
+CommitObject = ScrapeSVN(repoURL)
 
 
 a,b =get_commit_info(CommitObject)
+
+url = 'https://sourced.ecdf.ed.ac.uk/projects/geos/LSD_devel/timeline'
+
+FinalTweet = make_a_tweet(a,b,url)
     
-print a,b
+
