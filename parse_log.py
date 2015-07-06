@@ -85,9 +85,7 @@ def Run():
     
     FinalTweet = make_a_tweet(a,b,url)
 
-    print 'I would tweet now'
-    if CheckForNewCommit(a):          
+    if CheckForNewCommit(a):    
         Tweet(FinalTweet,a)
 
-if __name__ == "__main__":
-    Run()
+Run()
