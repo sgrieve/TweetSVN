@@ -96,8 +96,7 @@ def Run(repoURL,url):
 
 if __name__ == "__main__":
     if len(sys.argv) == 3:
-        print 'phew'
-        #Run(sys.argv[1],sys.argv[2])         
+        Run(sys.argv[1],sys.argv[2])         
     else:
         sys.exit('%s needs 2 arguments:\n\n[1] The url of the svn repository \n[2] The url to attach to each tweet\n' % sys.argv[0])
 
