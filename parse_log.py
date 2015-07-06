@@ -11,7 +11,7 @@ def ScrapeSVN(repoURL):
     commit message from svn log.
     """
     import subprocess
-    command = 'svn log -l 1 ' + url 
+    command = 'svn log -l 1 ' + repoURL 
     process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
     return process.stdout
 
@@ -54,16 +54,22 @@ def make_a_tweet(revision,message,url):
     else:
         return tweet
 
+def Tweet(Tweet):
+    import subprocess
+    command = 'perl ttytter.pl -status=\"'+Tweet+'\" /short'
+    subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)    
 
 repoURL = 'https://svn.ecdf.ed.ac.uk/repo/geos/LSD_devel/LSDTopoTools/trunk'
 
 CommitObject = ScrapeSVN(repoURL)
 
 
-a,b =get_commit_info(CommitObject)
+a,b = get_commit_info(CommitObject)
 
 url = 'https://sourced.ecdf.ed.ac.uk/projects/geos/LSD_devel/timeline'
 
 FinalTweet = make_a_tweet(a,b,url)
+
+Tweet(FinalTweet)
     
 
