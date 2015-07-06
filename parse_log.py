@@ -36,7 +36,7 @@ def check_length_for_tweet(revision,message):
     """
     Recursively remove a word from the message until it is small enough for a tweet
     """
-    if len(revision)+len(message) > 130: #set this value once I know the remaining tweet content
+    if len(revision)+len(message) > 110: #I think 115 is the hard limit once the url is shortened 
         #get rid of a word
         message = ' '.join(message.split(' ')[:-1])
         return check_length_for_tweet(revision,message)
@@ -56,8 +56,8 @@ def Tweet(Tweet, revision):
     """
     import subprocess
     command = 'perl ttytter.pl -status=\"'+Tweet+'\" /short'
-    subprocess.Popen(command, stdout=subprocess.PIPE, shell=True) 
-    
+    x = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True) 
+    print x.stdout.read()
     with open('.rev','w') as f:
         f.write(revision)
     
@@ -85,7 +85,7 @@ def Run():
     url = 'https://sourced.ecdf.ed.ac.uk/projects/geos/LSD_devel/timeline'
     
     FinalTweet = make_a_tweet(a,b,url)
-
+    print len(FinalTweet)
     if CheckForNewCommit(a):    
         Tweet(FinalTweet,a)
 
