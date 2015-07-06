@@ -47,17 +47,23 @@ def make_a_tweet(revision,message,url):
     """
     Generate a valid tweet using the info passed in.
     """
-    tweet = revision + ': ' + message + ' | '+ url
-    
-    if len(tweet) > 140:
-        raise ValueError('Tweet length is %i but must be < 140' % (len(tweet)))
-    else:
-        return tweet
+    return revision + ': ' + message + ' | '+ url
 
 def Tweet(Tweet):
     import subprocess
     command = 'perl ttytter.pl -status=\"'+Tweet+'\" /short'
     subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)    
+    
+def CheckForNewCommit(Revision):
+    """
+    Avoid repeating the same tweet by comparing revision numbers.
+    Returns True if values are different.
+    """
+    with open('.rev','r') as f:
+        CurrentRev = float(f.readline())
+    
+    return CurrentRev != Revision
+    
 
 repoURL = 'https://svn.ecdf.ed.ac.uk/repo/geos/LSD_devel/LSDTopoTools/trunk'
 
