@@ -63,7 +63,7 @@ def Tweet(Tweet, revision):
     .rev
     """
     import subprocess
-    command = 'perl ttytter.pl -status=\"'+Tweet+'\" /short'
+    command = './ttytter.pl -status=\"'+Tweet+'\" /short'
     subprocess.Popen(command, stdout=subprocess.PIPE, shell=True) 
     with open('.rev','w') as f:
         f.write(revision)
@@ -73,8 +73,6 @@ def CheckForNewCommit(Revision):
     """
     Avoid repeating the same tweet by comparing revision numbers.
     Returns True if values are different.
-    
-    Need to test for .rev existing and create it if not.
     """
     import os.path as op
     if op.isfile('.rev'):
