@@ -4,6 +4,7 @@ Created on Fri Jul 03 16:59:37 2015
 
 @author: s0675405
 """
+import sys
 
 def ScrapeSVN(repoURL):
     """
@@ -73,19 +74,18 @@ def CheckForNewCommit(Revision):
     
     return CurrentRev != int(Revision)
 
-def Run():
-    repoURL = 'https://svn.ecdf.ed.ac.uk/repo/geos/LSD_devel/LSDTopoTools/trunk'
-    
+def Run(repoURL,url):
+    """
+    Wrapper to run all of the steps to send out a tweet
+    """
     CommitObject = ScrapeSVN(repoURL)
-    
-    
     a,b = get_commit_info(CommitObject)
-    
-    url = 'https://sourced.ecdf.ed.ac.uk/projects/geos/LSD_devel/timeline'
-    
     FinalTweet = make_a_tweet(a,b,url)
-
-    if CheckForNewCommit(a):    
+    
+    if CheckForNewCommit(a):          
         Tweet(FinalTweet,a)
 
-Run()
+if __name__ == "__main__":
+    #repoURL = 'https://svn.ecdf.ed.ac.uk/repo/geos/LSD_devel/LSDTopoTools/trunk'    
+    #url = 'https://sourced.ecdf.ed.ac.uk/projects/geos/LSD_devel/timeline'
+    Run(sys.argv[1],sys.argv[2])
