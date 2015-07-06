@@ -1,8 +1,15 @@
 # -*- coding: utf-8 -*-
 """
+Script that scrapes commit info from svn logs, formats the info into a tweet
+and then tweets it.
+
+Requres ttytter [http://www.floodgap.com/software/ttytter/] perl script in the same 
+directory as the python script, and a twitter accout with the OAUTH set up to allow
+ttytter to tweet.
+
 Created on Fri Jul 03 16:59:37 2015
 
-@author: s0675405
+@author: Stuart Grieve
 """
 import sys
 
@@ -69,14 +76,18 @@ def CheckForNewCommit(Revision):
     
     Need to test for .rev existing and create it if not.
     """
-    with open('.rev','r') as f:
-        CurrentRev = int(f.readline())
-    
+    import os.path as op
+    if op.isfile('.rev'):
+        with open('.rev','r') as f:
+            CurrentRev = int(f.readline())
+    else:
+        #if the file is not present assume commit is new, set value to zero so function returns True
+        CurrentRev = 0
     return CurrentRev != int(Revision)
 
 def Run(repoURL,url):
     """
-    Wrapper to run all of the steps to send out a tweet
+    Wrapper to run all of the steps to send out a tweet.
     """
     CommitObject = ScrapeSVN(repoURL)
     a,b = get_commit_info(CommitObject)
