@@ -95,9 +95,5 @@ def Run(repoURL,url):
         Tweet(FinalTweet,a)
 
 if __name__ == "__main__":
-    #repoURL = 'https://svn.ecdf.ed.ac.uk/repo/geos/LSD_devel/LSDTopoTools/trunk'    
-    #url = 'https://sourced.ecdf.ed.ac.uk/projects/geos/LSD_devel/timeline'
     Run(sys.argv[1],sys.argv[2])
     
-#cron job example
-#00 08,11,14,17,20 * * 1-5 <command>
