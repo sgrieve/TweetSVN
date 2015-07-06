@@ -49,33 +49,44 @@ def make_a_tweet(revision,message,url):
     """
     return revision + ': ' + message + ' | '+ url
 
-def Tweet(Tweet):
+def Tweet(Tweet, revision):
+    """
+    Send the tweet using ttytter and write the revision number into
+    .rev
+    """
     import subprocess
     command = 'perl ttytter.pl -status=\"'+Tweet+'\" /short'
-    subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)    
+    subprocess.Popen(command, stdout=subprocess.PIPE, shell=True) 
+    
+    with open('.rev','w') as f:
+        f.write(revision)
+    
     
 def CheckForNewCommit(Revision):
     """
     Avoid repeating the same tweet by comparing revision numbers.
     Returns True if values are different.
+    
+    Need to test for .rev existing and create it if not.
     """
     with open('.rev','r') as f:
-        CurrentRev = float(f.readline())
+        CurrentRev = int(f.readline())
     
-    return CurrentRev != Revision
+    return CurrentRev != int(Revision)
+
+def Run():
+    repoURL = 'https://svn.ecdf.ed.ac.uk/repo/geos/LSD_devel/LSDTopoTools/trunk'
     
-
-repoURL = 'https://svn.ecdf.ed.ac.uk/repo/geos/LSD_devel/LSDTopoTools/trunk'
-
-CommitObject = ScrapeSVN(repoURL)
-
-
-a,b = get_commit_info(CommitObject)
-
-url = 'https://sourced.ecdf.ed.ac.uk/projects/geos/LSD_devel/timeline'
-
-FinalTweet = make_a_tweet(a,b,url)
-
-Tweet(FinalTweet)
+    CommitObject = ScrapeSVN(repoURL)
     
+    
+    a,b = get_commit_info(CommitObject)
+    
+    url = 'https://sourced.ecdf.ed.ac.uk/projects/geos/LSD_devel/timeline'
+    
+    FinalTweet = make_a_tweet(a,b,url)
 
+    if CheckForNewCommit(a):    
+        Tweet(FinalTweet,a)
+
+Run()
