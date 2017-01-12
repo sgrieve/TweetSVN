@@ -3,15 +3,21 @@
 Script that scrapes commit info from svn logs, formats the info into a tweet
 and then tweets it.
 
-Requres ttytter [http://www.floodgap.com/software/ttytter/] perl script in the same
-directory as the python script, and a twitter accout with the OAUTH set up to allow
-ttytter to tweet.
+New version uses the tweepy python library to handle all of the tweeting
+rather than the external perl script I used to use.
+
+Requres python 3, tweepy, a file secrets.py which holds the twitter
+authentication information and a twitter accout with the OAUTH set up to allow
+tweepy to tweet on an account.
 
 Created on Fri Jul 03 16:59:37 2015
+Updated 12/1/17
 
 @author: Stuart Grieve
 """
 import sys
+import tweepy
+from secrets import *
 
 
 def ScrapeSVN(repoURL):
@@ -20,9 +26,19 @@ def ScrapeSVN(repoURL):
     commit message from svn log.
     """
     import subprocess
-    command = 'svn log -l 1 ' + repoURL
+
+    command = ('svn --non-interactive --no-auth-cache --username {0} '
+               '--password {1} log -l 1 {2}'.format(SVN_USR, SVN_PASS, repoURL))
+
     process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
     return process.stdout
+
+
+def ByteString2String(Bstring):
+    """
+    Convenience function to convert a byte string to string.
+    """
+    return str(Bstring, 'utf-8')
 
 
 def get_commit_info(FileObject):
@@ -36,11 +52,11 @@ def get_commit_info(FileObject):
 
     data = FileObject.read()
     FileObject.close()
+    revision = re.search(b'r(\d+)\s\|', data).group()[1:-2]
+    message = re.search(b'(\s\s)(.+?)(?=---)', data, re.DOTALL).group().strip()
 
-    revision = re.search('r(\d+)\s\|', data).group()[1:-2]
-    message = re.search('(\s\s)(.+?)(?=---)', data, re.DOTALL).group().strip()
-
-    return check_length_for_tweet(revision, message)
+    return check_length_for_tweet(ByteString2String(revision),
+                                  ByteString2String(message))
 
 
 def check_length_for_tweet(revision, message):
@@ -65,13 +81,18 @@ def make_a_tweet(revision, message, url):
 
 def Tweet(Tweet, revision):
     """
-    Send the tweet using ttytter and write the revision number into
-    .rev
+    Tweet the commit message and wrie the revision number to a file.
     """
-    import subprocess
-    command = './ttytter.pl -status=\"'+Tweet+'\" /short'
-    subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
-    with open('.rev','w') as f:
+    # Twitter authentication
+    auth = tweepy.OAuthHandler(C_KEY, C_SECRET)
+    auth.set_access_token(A_TOKEN, A_TOKEN_SECRET)
+    api = tweepy.API(auth)
+
+    #try:
+    api.update_status(Tweet)
+
+    # store the revision number in a file
+    with open('.rev', 'w') as f:
         f.write(revision)
 
 
